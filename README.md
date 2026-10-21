@@ -1,2 +1,385 @@
-# CouchClass1
-Where Learning Meets Enterainment
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CouchClass</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: #101426;
+  color: white;
+  text-align: center;
+  padding: 30px 18px;
+}
+
+header {
+  padding: 20px;
+}
+
+.logo {
+  font-size: 55px;
+}
+
+h1 {
+  color: #a99aff;
+  font-size: 42px;
+  margin: 8px;
+}
+
+.tagline {
+  color: #ffca70;
+  font-size: 18px;
+}
+
+main {
+  max-width: 750px;
+  margin: 20px auto;
+  background: #1b2240;
+  padding: 28px;
+  border-radius: 22px;
+}
+
+button {
+  display: block;
+  width: 100%;
+  padding: 17px;
+  margin: 12px 0;
+  border: 2px solid #454c70;
+  border-radius: 12px;
+  background: #292f50;
+  color: white;
+  font-size: 19px;
+  cursor: pointer;
+}
+
+button:hover,
+button:focus {
+  outline: 3px solid #a99aff;
+  background: #454078;
+}
+
+.primary {
+  background: #7462e8;
+  border-color: #7462e8;
+}
+
+#feedback {
+  line-height: 1.6;
+  font-size: 18px;
+}
+
+#progress {
+  color: #c4c9e5;
+}
+
+footer {
+  color: #aab0cd;
+  padding: 15px;
+}
+
+.hidden {
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">📺</div>
+  <h1>CouchClass</h1>
+  <p class="tagline">Big Learning. Bigger Screen.</p>
+  <p>Learn • Play • Discover</p>
+</header>
+
+<main>
+  <section id="home">
+    <h2>Welcome to CouchClass!</h2>
+    <p>Choose a category and test your knowledge.</p>
+
+    <button class="primary" onclick="startQuiz('Science')">
+      🔬 Science
+    </button>
+
+    <button class="primary" onclick="startQuiz('Technology')">
+      💻 Technology
+    </button>
+
+    <button class="primary" onclick="startQuiz('General Knowledge')">
+      🌎 General Knowledge
+    </button>
+  </section>
+
+  <section id="game" class="hidden">
+    <p id="progress"></p>
+    <h2 id="question"></h2>
+    <div id="answers"></div>
+    <p id="feedback" aria-live="polite"></p>
+
+    <button id="next" class="primary hidden"
+      onclick="nextQuestion()">Next Question →</button>
+  </section>
+
+  <section id="result" class="hidden">
+    <h2>🎉 Quiz Complete!</h2>
+    <p id="finalScore"></p>
+    <p id="finalMessage"></p>
+    <button class="primary" onclick="showHome()">
+      Play Again
+    </button>
+  </section>
+</main>
+
+<footer>
+  Made for curious minds, one question at a time 💜
+</footer>
+
+<script>
+const quizzes = {
+  "Science": [
+    {
+      q: "Which planet is known as the Red Planet?",
+      a: ["Earth", "Mars", "Venus", "Jupiter"],
+      correct: 1,
+      why: "Mars looks reddish because of iron oxide on its surface."
+    },
+    {
+      q: "Which gas do plants absorb?",
+      a: ["Oxygen", "Helium", "Carbon dioxide", "Hydrogen"],
+      correct: 2,
+      why: "Plants use carbon dioxide during photosynthesis."
+    },
+    {
+      q: "What is the centre of an atom called?",
+      a: ["Cell", "Nucleus", "Orbit", "Core"],
+      correct: 1,
+      why: "An atom has a central nucleus containing protons and usually neutrons."
+    },
+    {
+      q: "Which organ pumps blood around the body?",
+      a: ["Lungs", "Brain", "Heart", "Stomach"],
+      correct: 2,
+      why: "The heart pumps blood through the circulatory system."
+    },
+    {
+      q: "What is the boiling point of water at sea level?",
+      a: ["50°C", "100°C", "150°C", "200°C"],
+      correct: 1,
+      why: "Pure water boils at approximately 100°C at standard atmospheric pressure."
+    }
+  ],
+
+  "Technology": [
+    {
+      q: "What does CPU stand for?",
+      a: ["Central Processing Unit", "Computer Power Utility",
+          "Central Program User", "Control Processing Use"],
+      correct: 0,
+      why: "The CPU executes instructions and processes data."
+    },
+    {
+      q: "Which language styles web pages?",
+      a: ["CSS", "SQL", "Python only", "C"],
+      correct: 0,
+      why: "CSS controls colours, layouts, spacing and other visual styles."
+    },
+    {
+      q: "What does HTML help create?",
+      a: ["Web page structure", "Electricity", "Computer hardware",
+          "Internet cables"],
+      correct: 0,
+      why: "HTML defines the structure and content of web pages."
+    },
+    {
+      q: "What does AI stand for?",
+      a: ["Automatic Internet", "Artificial Intelligence",
+          "Advanced Input", "Applied Information"],
+      correct: 1,
+      why: "Artificial intelligence enables computers to perform tasks that normally require human intelligence."
+    },
+    {
+      q: "Which device is used to move a cursor?",
+      a: ["Printer", "Speaker", "Mouse", "Microphone"],
+      correct: 2,
+      why: "A mouse is a pointing device used to control a cursor."
+    }
+  ],
+
+  "General Knowledge": [
+    {
+      q: "What is the capital of India?",
+      a: ["Mumbai", "New Delhi", "Jaipur", "Kolkata"],
+      correct: 1,
+      why: "New Delhi is the capital of India."
+    },
+    {
+      q: "How many days are there in a leap year?",
+      a: ["364", "365", "366", "367"],
+      correct: 2,
+      why: "A leap year has 366 days, including February 29."
+    },
+    {
+      q: "Which is the largest ocean?",
+      a: ["Indian", "Arctic", "Atlantic", "Pacific"],
+      correct: 3,
+      why: "The Pacific Ocean is the largest ocean on Earth."
+    },
+    {
+      q: "Which star is closest to Earth?",
+      a: ["Sirius", "The Sun", "Polaris", "Vega"],
+      correct: 1,
+      why: "The Sun is our nearest star."
+    },
+    {
+      q: "How many colours are traditionally named in a rainbow?",
+      a: ["Five", "Six", "Seven", "Eight"],
+      correct: 2,
+      why: "The traditional list names seven rainbow colours."
+    }
+  ]
+};
+
+let questions = [];
+let index = 0;
+let score = 0;
+let answered = false;
+
+function startQuiz(category) {
+  questions = quizzes[category];
+  index = 0;
+  score = 0;
+
+  document.getElementById("home").classList.add("hidden");
+  document.getElementById("result").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+
+  showQuestion();
+}
+
+function showQuestion() {
+  answered = false;
+
+  const item = questions[index];
+
+  document.getElementById("progress").textContent =
+    "Question " + (index + 1) + " of " + questions.length +
+    "  |  Score: " + score;
+
+  document.getElementById("question").textContent = item.q;
+  document.getElementById("feedback").textContent = "";
+  document.getElementById("next").classList.add("hidden");
+
+  const answers = document.getElementById("answers");
+  answers.innerHTML = "";
+
+  item.a.forEach(function(option, i) {
+    const button = document.createElement("button");
+    button.textContent = String.fromCharCode(65 + i) + ". " + option;
+    button.onclick = function() {
+      checkAnswer(i);
+    };
+    answers.appendChild(button);
+  });
+
+  answers.querySelector("button").focus();
+}
+
+function checkAnswer(choice) {
+  if (answered) return;
+  answered = true;
+
+  const item = questions[index];
+  const buttons = document.querySelectorAll("#answers button");
+
+  buttons.forEach(function(button) {
+    button.disabled = true;
+  });
+
+  const feedback = document.getElementById("feedback");
+
+  if (choice === item.correct) {
+    score++;
+    feedback.textContent = "✅ Correct! " + item.why;
+  } else {
+    feedback.textContent =
+      "💡 The correct answer is " +
+      item.a[item.correct] + ". " + item.why;
+  }
+
+  document.getElementById("progress").textContent =
+    "Question " + (index + 1) + " of " + questions.length +
+    "  |  Score: " + score;
+
+  const next = document.getElementById("next");
+  next.textContent = index === questions.length - 1
+    ? "See My Results →"
+    : "Next Question →";
+
+  next.classList.remove("hidden");
+  next.focus();
+}
+
+function nextQuestion() {
+  index++;
+
+  if (index < questions.length) {
+    showQuestion();
+  } else {
+    document.getElementById("game").classList.add("hidden");
+    document.getElementById("result").classList.remove("hidden");
+
+    document.getElementById("finalScore").textContent =
+      "You scored " + score + " out of " + questions.length + "!";
+
+    document.getElementById("finalMessage").textContent =
+      score === questions.length
+        ? "Amazing! You got every answer right! 🏆"
+        : "Great job! Keep learning and try again. 💜";
+
+    document.querySelector("#result button").focus();
+  }
+}
+
+function showHome() {
+  document.getElementById("result").classList.add("hidden");
+  document.getElementById("home").classList.remove("hidden");
+  document.querySelector("#home button").focus();
+}
+
+// Keyboard controls help with testing using arrow keys and Enter.
+document.addEventListener("keydown", function(event) {
+  if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+    const visibleButtons = Array.from(
+      document.querySelectorAll("button:not(:disabled)")
+    ).filter(function(button) {
+      return button.offsetParent !== null;
+    });
+
+    const current = visibleButtons.indexOf(document.activeElement);
+
+    if (current !== -1 && visibleButtons.length > 0) {
+      event.preventDefault();
+
+      const direction = event.key === "ArrowDown" ? 1 : -1;
+      const nextIndex =
+        (current + direction + visibleButtons.length) %
+        visibleButtons.length;
+
+      visibleButtons[nextIndex].focus();
+    }
+  }
+});
+</script>
+
+</body>
+</html>
+
